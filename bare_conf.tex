@@ -20,15 +20,18 @@
 %
 % ^.
 \fi
-\hyphenation{op-tical net-works semi-conduc-tor}  
+\hyphenation{op-tical net-works semi-conduc-tor}
 
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{	Imitation of Human Drawing by a NAO Robot}
-\author{\IEEEauthorblockN{Jose Maria Munoz\IEEEauthorrefmark{1}, Jose Avalos\IEEEauthorrefmark{1}
-Oscar E. Ramos\IEEEauthorrefmark{1}}
+\author{\IEEEauthorblockN{Jose-Maria Munoz, Jose Avalos, Oscar E. Ramos}
 \IEEEauthorblockA{\IEEEauthorrefmark{1}Department of Electrical Engineering, Universidad de Ingenieria y Tecnologia - UTEC, Lima, Peru.}
 }
+% \author{\IEEEauthorblockN{Jose-Maria Munoz\IEEEauthorrefmark{1}, Jose Avalos\IEEEauthorrefmark{1}
+% Oscar E. Ramos\IEEEauthorrefmark{1}}
+% \IEEEauthorblockA{\IEEEauthorrefmark{1}Department of Electrical Engineering, Universidad de Ingenieria y Tecnologia - UTEC, Lima, Peru.}
+% }
 \maketitle
 \begin{abstract}
 Co-working applications are increasing in robotics due to the need of manipulating high volume of information in real time. This paper presents a methodology to develop a robot-based drawing system that allows the reproduction of an image shown by an operator. It incorporates cameras for real-time image processing, which uses filters, morphological operations and Hough transforms to obtain the desired features. A system calibration technique is also proposed to calibrate the coordinates of the robot with respect to the image frame before using an inverse kinematics method that controls the robot motion. The speed of the drawing imitation method depends on the network to which the system is connected. The proposed method is applied to the NAO robot and the framework consists of one robot being shown the desired image information while another robot, remotely localized, sketches the image.
@@ -50,29 +53,32 @@ of facial features.
 \section{Image Processing}
 \label{sec:methodology}
 
-This section explains the methods used for the processing of the images and thus obtain the necessary points to perform the inverse kinematics.
+The NAO robot has two embedded RGB cameras which are used to obtain the desired images. However, the bare RGB images cannot be directly used to drive the robot motion, but need to be further processed to obtain a proper format. This section presents the image processing methods used to obtain the desired image features that will be used as target points for the drawing process.
 
-\subsection{Morphological Erosion}
+\subsection{Detecting Edges on the Image}
 
-To improve the quality of an image taken from the camera of the NAO, it is necessary to perform a pre-processing to the image. That is why a morphological operation will be used to increase the number of pixels and give a better quality to the image.It is the morphological transformation which combines two sets using the vector subtraction of set elements. If A and B are sets in Euclidean N-space, then the erosion of A by B is the set of all elements $x$ for which $x + b \in A$ for every $b \in B$. The erosion of A by B is denoted by $A \ominus B$ and is defined by:
+The first step in the processing process consists in obtaining edges from the acquired image. To this end, the RGB image needs to be converted to gray scale reducing the three channels to only one, which keeps the main image characteristics. To be able to properly draw, edges need to be extracted from the gray scale image. Therefore, an edge detector is used followed by a morphological operation that cleans the surface.
 
-\begin{equation}
-\begin{split}
-A \ominus B = &\{
-x \in E^{N} \mid x + b \in  \textrm{A for every b}  \in B, \textrm{there exists an}\\
-& \textrm{a} \in \textrm{A such that} x = a - b\}
-\end{split}
-\end{equation}
-The utility of the erosion transformation is better appreciated when the erosion is expressed in a different form. The erosion of an image $A$ by a structuring element $B$ is the set of all elements $x$ of $E^{N}$ for which $B$ translated to $x$ is contained in $A$. In fact, this was the definition used for erosion by \cite{ref6}. The proof is immediate from the definition of erosion and the definition of translation.
-\begin{equation}
-A \ominus B =\{x \in E^{N} \mid (B)_{x} \subseteq A \}
-\end{equation}
-Thus the structuring element $B$ may be visualized as a probe which slides across the image $A$, testing the spatial nature of $A$ at every point. Where $B$ translated to $x$ can be contained in $A$ (by placing the origin of $B$ at $x$), then $x$ belongs to the erosion $A \ominus B$. 
-Other proposition about erosion of an image A by structuring element B is the intersection af all translations of A by the points $-b$, where $b \in B$.
-\begin{equation}
-A \ominus B = \bigcap_{b \in B} (A)_{-b}
-\end{equation}
-\subsection{Canny edge detector}
+A morphological operation is used to increase the number of pixels providing a better quality to the image. This operation combines two sets using the vector subtraction of set elements. Let $A$ and $B$ be sets in the Euclidean $N$-space. The erosion of $A$ by $B$, denoted by $A \ominus B$, is the set of all elements $x$ for which $x + b \in A$ for every $b \in B$.
+% and is defined by:
+% \begin{equation}
+% \begin{split}
+% A \ominus B = &\{
+% x \in E^{N} \mid x + b \in  \textrm{A for every b}  \in B, \textrm{there exists an}\\
+% & \textrm{a} \in \textrm{A such that} x = a - b\}
+% \end{split}
+% \end{equation}
+% The utility of the erosion transformation is better appreciated when the erosion is expressed in a different form. The erosion of an image $A$ by a structuring element $B$ is the set of all elements $x$ of $E^{N}$ for which $B$ translated to $x$ is contained in $A$. In fact, this was the definition used for erosion by \cite{ref6}. The proof is immediate from the definition of erosion and the definition of translation.
+% \begin{equation}
+% A \ominus B =\{x \in E^{N} \mid (B)_{x} \subseteq A \}
+% \end{equation}
+% Thus the structuring element $B$ may be visualized as a probe which slides across the image $A$, testing the spatial nature of $A$ at every point. Where $B$ translated to $x$ can be contained in $A$ (by placing the origin of $B$ at $x$), then $x$ belongs to the erosion $A \ominus B$.
+% Other proposition about erosion of an image A by structuring element B is the intersection af all translations of A by the points $-b$, where $b \in B$.
+% \begin{equation}
+% A \ominus B = \bigcap_{b \in B} (A)_{-b}
+% \end{equation}
+
+%\subsection{Canny edge detector}
 Canny is an algorithm that is used to detect a wide range of edges in images. This algorithm is computationally eficient and is quite used for its good edge detection, good location and its minimum response.
 The first stage to use Canny, is to use a filter based on the first derivative of a Gaussian to be able to reduce as much noise as possible. The result is a slightly blurred image compared to the original version.
 The second step is to find the intensity of the gradient of the image; the edge of an image can point in different directions, so Canny's algorithm uses four filters to detect horizontal,vertical and diagonals edges of the blurred image. The edge detection operator (Roberts, Prewitt, Sobel) returns a value for the first derivative in the horizontal direction $(G_{y})$ and the vertical direction $(G_{x})$. From this, the edge gradient and the direction can be determined:
