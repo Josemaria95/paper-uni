@@ -14,7 +14,6 @@
 \usepackage{cite} % ordena as citacoes
 \usepackage[T1]{fontenc}
 \usepackage{mathtools, cuted}
-
 \usepackage{subfig}
 \usepackage{caption}
 
@@ -296,21 +295,47 @@ where $\Delta T$ is the control time. This control time depends on each specific
 
 \section{Drawing Scheme}
 %\label{sec:methodology}
+This section explains the steps that had to be followed to make the NAO able to obtain the points of the image to be plotted. In the (ADD FIGURE) the flow diagram is shown where the steps performed are shown in detail.
+It was divided into two parts for this experimentation, the first part is to obtain the points of the image. For this part it is necessary that the user can make an example drawing, as can be seen in (ADD FIGURE) From this example the NAO should take a screenshot, with its front camera, of this image to go to the processing part from image. As you can see in (ADD FIGURE). Once the image acquisition step has been performed, the pre-processing of the image where the morphological method of Dilation and Erosion is applied is performed in order to improve the quality of the image. As can be seen in (ADD FIGURE). After this step the Canny methods were applied to detect the edges of the image (ADD FIGURE), after that realize to morphological skeleton and to obtain the points of the image. Once the part of the image processing is done and the Cartesian points of the operational space are obtained, the data is stored in a topic in ROS (Robot Operation System) and the inverse kinematics are calculated. This allows to simulate the movement of the right arm of the NAO following the trajectory of the images shown above (ADD FIGURE).
 
 \begin{strip}
-\begin{center}
-\includegraphics[scale=0.3]{flowchart.eps}\\
-\textbf{Figure.2} Diagrama de Flujo para que el NAO pueda dibujar.
-\end{center}
+\centering
+\captionsetup{font=footnotesize}
+\includegraphics[width=0.6\textwidth]{flowchart.eps}\\
+%\caption{Flowchart for that NAO can draw.}
+\textsc{Figure 2:} Flowchart for that NAO can draw.
 \end{strip}
-
-
 
 \section{Results}
 
+This section shows the results of the different processes that were performed on the images and then have the NAO take the coordinate points and can move the right arm according to the trajectory that originates by putting all these points together.
+
+\begin{figure}[htb]
+\centering
+~\subfloat[Original Image]{\includegraphics[width=40mm]{orig_tria.jpg}}
+~\subfloat[Canny Image]{\includegraphics[width=40mm]{canny_tria.jpg}}
+~\subfloat[Dilate Image]{\includegraphics[width=40mm]{dilate_tria.jpg}}
+~\subfloat[Erosion Image]{\includegraphics[width=40mm]{erode_tria.jpg}}
+~\subfloat[Skeleton Image]{\includegraphics[width=40mm]{skel_tria.jpg}}
+\caption{Steps of image processing} \label{fig:triangle}
+\end{figure}
 
 
+\begin{figure}[htb]
+\centering
+~\subfloat[Original Image]{\includegraphics[width=40mm]{imagen_original.jpg}}
+~\subfloat[Canny Image]{\includegraphics[width=40mm]{canny_taza.jpg}}
+~\subfloat[Dilate Image]{\includegraphics[width=40mm]{dilation_taza.jpg}}
+~\subfloat[Erosion Image]{\includegraphics[width=40mm]{erode_taza.jpg}}
+~\subfloat[Skeleton Image]{\includegraphics[width=40mm]{skel_taza.jpg}}
+\caption{Steps of image processing} \label{fig:cup}
+\end{figure}
 
+\begin{figure}
+\centering
+\includegraphics[scale=0.3]{nao1.png}
+\caption{Simulation of the right arm of Robot NAO}
+\end{figure}
 \section{Conclusion}
 \label{sec:conclusion}
 
